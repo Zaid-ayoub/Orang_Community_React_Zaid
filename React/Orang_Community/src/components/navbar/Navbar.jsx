@@ -12,29 +12,12 @@ import axios from "axios";
 const Navbar = () => {
   const { toggle, darkMode } = useContext(DarkModeContext);
   const { currentUser } = useContext(AuthContext);
-  // State for user details and profile dropdown visibility
-  const [userDetails, setUserDetails] = useState(null);
-  const [isProfileDropdownVisible, setIsProfileDropdownVisible] = useState(false);
 
   // State for search functionality
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const searchRef = useRef(null);
-
-  // Fetch user details from the API
-  useEffect(() => {
-    const fetchUserDetails = async () => {
-      try {
-        const response = await axios.get("http://localhost:8000/api/nav/user-details");
-        setUserDetails(response.data.data); // Set user details
-      } catch (error) {
-        console.error("Error fetching user details:", error);
-      }
-    };
-
-    fetchUserDetails();
-  }, []);
 
   // Handle search input
   const handleSearch = async (e) => {
@@ -77,11 +60,6 @@ const Navbar = () => {
     setIsDropdownVisible(false);
   };
 
-  // Toggle profile dropdown visibility
-  const toggleProfileDropdown = () => {
-    setIsProfileDropdownVisible((prev) => !prev);
-  };
-
   return (
     <div className="navbar">
       <div className="left">
@@ -121,12 +99,13 @@ const Navbar = () => {
                       }}
                     >
                       <img
-                        src={user.image || "/default-avatar.png"}
+                        src={user.image_url || "/default-avatar.png"}
                         alt={user.full_name}
                         style={{
                           width: 40,
                           height: 40,
                           borderRadius: "50%",
+                          objectFit: "cover",
                         }}
                       />
                       <span>{user.full_name}</span>
@@ -140,9 +119,8 @@ const Navbar = () => {
       </div>
 
       <div className="right">
-        <div className="user" onClick={toggleProfileDropdown}>
-          {/* Display user image and name from API */}
-          {userDetails ? (
+        <div className="user">
+          {currentUser ? (
             <>
               <img
                 src={currentUser?.profile_image_url || "/default-avatar.png"}
@@ -151,37 +129,13 @@ const Navbar = () => {
                   width: 40,
                   height: 40,
                   borderRadius: "50%",
+                  objectFit: "cover",
                 }}
               />
               <span>{currentUser.full_name}</span>
             </>
           ) : (
             <span>Loading...</span>
-          )}
-
-          {/* Profile Dropdown */}
-          {isProfileDropdownVisible && (
-            <div className="profile-dropdown">
-              <ul>
-                <li>
-                  <Link
-                    to={`/profile/${userDetails?.id}`}
-                    style={{ textDecoration: "none", color: "inherit" }}
-                  >
-                    View Profile
-                  </Link>
-                </li>
-
-                <li>
-                  <Link
-                    to="/logout"
-                    style={{ textDecoration: "none", color: "inherit" }}
-                  >
-                    Logout
-                  </Link>
-                </li>
-              </ul>
-            </div>
           )}
         </div>
       </div>
