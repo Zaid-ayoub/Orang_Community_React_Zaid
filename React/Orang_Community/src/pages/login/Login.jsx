@@ -32,6 +32,8 @@ const Login = () => {
       });
   
       if (response.data.status) {
+        setCurrentUser(response.data.user); // Set user data in context
+        localStorage.setItem("currentUser", JSON.stringify(response.data.user)); // Store user
         // Include the profile image URL if available
         const userWithImage = {
           ...response.data.user,
@@ -43,6 +45,7 @@ const Login = () => {
         setCurrentUser(userWithImage); // Set user data in context
         localStorage.setItem("currentUser", JSON.stringify(userWithImage)); // Store user data with image URL
         localStorage.setItem("token", response.data.token); // Store token
+        console.log("Logged in user data:", response.data.user);
         console.log("Logged in user data:", userWithImage);
   
         // Ensure the token is attached to axios requests

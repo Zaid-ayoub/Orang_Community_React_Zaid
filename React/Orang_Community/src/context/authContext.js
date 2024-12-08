@@ -6,15 +6,12 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
 
-  // Function to initialize user and token from local storage
   const initializeAuth = () => {
     try {
       const storedUser = localStorage.getItem("currentUser");
       const storedToken = localStorage.getItem("token");
-
       if (storedUser && storedToken) {
         const parsedUser = JSON.parse(storedUser);
-
         // Optionally, validate the token (e.g., check expiry)
         setCurrentUser(parsedUser);
         axios.defaults.headers["Authorization"] = `Bearer ${storedToken}`;
@@ -25,16 +22,13 @@ export const AuthProvider = ({ children }) => {
       localStorage.removeItem("token");
     }
   };
-
   // Run once on component mount
   useEffect(() => {
     initializeAuth();
-
     // Optionally, listen for changes to localStorage
     const handleStorageChange = () => {
       initializeAuth();
     };
-
     window.addEventListener("storage", handleStorageChange);
     return () => {
       window.removeEventListener("storage", handleStorageChange);
@@ -49,7 +43,6 @@ export const AuthProvider = ({ children }) => {
       localStorage.removeItem("currentUser");
     }
   }, [currentUser]);
-
   return (
     <AuthContext.Provider value={{ currentUser, setCurrentUser }}>
       {children}
