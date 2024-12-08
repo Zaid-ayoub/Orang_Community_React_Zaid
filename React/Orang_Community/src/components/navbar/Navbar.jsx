@@ -1,3 +1,4 @@
+
 import "./navbar.scss";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
@@ -63,10 +64,14 @@ const Navbar = () => {
   return (
     <div className="navbar">
       <div className="left">
-        <Link to="/" style={{ textDecoration: "none" }}>
-          <span>Orange</span>
+      <img 
+          src="https://yo.orange.jo/sites/default/files/logo_1.png" 
+          alt="Logo" 
+          className="logo-img" 
+        />
+        <Link to="/" style={{ textDecoration: "none"}}>
+          <span className="logo-text">Community</span>
         </Link>
-        <HomeOutlinedIcon />
 
         {darkMode ? (
           <WbSunnyOutlinedIcon onClick={toggle} />

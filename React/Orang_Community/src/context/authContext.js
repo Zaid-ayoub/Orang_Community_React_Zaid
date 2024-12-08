@@ -5,6 +5,7 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const initializeAuth = () => {
     try {
@@ -12,7 +13,6 @@ export const AuthProvider = ({ children }) => {
       const storedToken = localStorage.getItem("token");
       if (storedUser && storedToken) {
         const parsedUser = JSON.parse(storedUser);
-        // Optionally, validate the token (e.g., check expiry)
         setCurrentUser(parsedUser);
         axios.defaults.headers["Authorization"] = `Bearer ${storedToken}`;
       }
@@ -20,12 +20,14 @@ export const AuthProvider = ({ children }) => {
       console.error("Error reading from localStorage:", error);
       localStorage.removeItem("currentUser");
       localStorage.removeItem("token");
+    } finally {
+      setLoading(false); // Ensure loading is set to false after initialization
     }
   };
-  // Run once on component mount
+
   useEffect(() => {
     initializeAuth();
-    // Optionally, listen for changes to localStorage
+
     const handleStorageChange = () => {
       initializeAuth();
     };
@@ -35,7 +37,6 @@ export const AuthProvider = ({ children }) => {
     };
   }, []);
 
-  // Update local storage whenever currentUser changes
   useEffect(() => {
     if (currentUser) {
       localStorage.setItem("currentUser", JSON.stringify(currentUser));
@@ -44,7 +45,7 @@ export const AuthProvider = ({ children }) => {
     }
   }, [currentUser]);
   return (
-    <AuthContext.Provider value={{ currentUser, setCurrentUser }}>
+    <AuthContext.Provider value={{ currentUser, setCurrentUser, loading }}>
       {children}
     </AuthContext.Provider>
   );
